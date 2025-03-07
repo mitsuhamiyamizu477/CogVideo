@@ -23,7 +23,7 @@ from diffusers import AutoencoderKLCogVideoX, CogVideoXTransformer3DModel, CogVi
 from diffusers.utils import export_to_video
 from transformers import T5EncoderModel
 from torchao.quantization import quantize_, int8_weight_only
-from torchao.float8.inference import ActivationCasting, QuantConfig, quantize_to_float8
+from torchao.quantization import quantize_, float8_weight_only
 
 os.environ["TORCH_LOGS"] = "+dynamo,output_code,graph_breaks,recompiles"
 torch._dynamo.config.suppress_errors = True
@@ -38,7 +38,7 @@ def quantize_model(part, quantization_scheme):
     if quantization_scheme == "int8":
         quantize_(part, int8_weight_only())
     elif quantization_scheme == "fp8":
-        quantize_to_float8(part, QuantConfig(ActivationCasting.DYNAMIC))
+        quantize_(model, float8_weight_only())
     return part
 
 
